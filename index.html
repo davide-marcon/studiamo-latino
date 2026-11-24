@@ -1,0 +1,1147 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Latino · Palestra di grammatica</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#20283a;background:#f6f5f0;line-height:1.55;--ink:#20283a;--blue:#2549a4;--gold:#e6aa36;--line:#dce1e8;--muted:#626d7e}
+    *{box-sizing:border-box}
+    body{margin:0}
+    button,input,select{font:inherit}
+    button,select{cursor:pointer}
+    button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #f3b641;outline-offset:2px}
+    .wrap{max-width:1080px;margin:auto;padding:0 20px}
+    header{background:#202b4d;color:white;padding:36px 0 42px}
+    header .eyebrow{color:#f4c778}
+    header p{max-width:680px;margin:0;color:#e3e8f4}
+    h1{font-family:Georgia,serif;font-size:clamp(2.2rem,6vw,3.8rem);line-height:1.05;margin:8px 0 12px}
+    h2{font-family:Georgia,serif;font-size:2rem;line-height:1.2;margin:0 0 10px}
+    h3{margin:0 0 8px}
+    h4{margin:22px 0 4px}
+    p{margin:0 0 14px}
+    .eyebrow{text-transform:uppercase;letter-spacing:.13em;font-weight:750;font-size:.73rem}
+    nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:-22px;position:relative}
+    nav button{background:white;border:1px solid var(--line);border-radius:12px;padding:12px 18px;font-weight:700;color:var(--ink);box-shadow:0 3px 12px #17233c10}
+    nav button[aria-current="page"]{background:var(--blue);border-color:var(--blue);color:white}
+
+    /* Barra del percorso: grado, punti, serie */
+    .hud{display:flex;gap:10px 22px;flex-wrap:wrap;align-items:center;background:white;border:1px solid var(--line);border-radius:14px;padding:12px 18px;margin-top:14px}
+    .hud-rank strong{font-family:Georgia,serif;font-size:1.25rem}
+    .hud-xp{flex:1;min-width:190px}
+    .hud-xp p{margin:4px 0 0}
+    .bar{height:10px;background:#e6eaf2;border-radius:6px;overflow:hidden}
+    .bar div{height:100%;width:0;background:var(--gold);transition:width .4s}
+    .hud-item{white-space:nowrap;font-size:.92rem}
+
+    main{padding-top:26px;padding-bottom:50px}
+    .intro{max-width:780px;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .card{background:white;border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 3px 16px #17233c08}
+    .wide{grid-column:1/-1}
+    .tag{display:inline-block;background:#eaf0ff;color:#2549a4;border-radius:20px;padding:3px 10px;font-size:.8rem;font-weight:700;margin-bottom:10px}
+    .muted{color:var(--muted)}
+    .small{font-size:.88rem}
+    .warning{color:#8e3d1c;font-weight:650}
+    .controls{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:0 0 18px}
+    .field{display:grid;gap:5px;flex:1;min-width:170px}
+    .field label{font-size:.85rem;font-weight:700}
+    select,input[type="text"]{width:100%;border:1px solid #aeb8c7;border-radius:9px;padding:10px 12px;background:white;color:var(--ink)}
+    .primary,.secondary{border:0;border-radius:9px;padding:11px 16px;font-weight:700}
+    .primary{background:var(--blue);color:white}
+    .primary:hover{background:#19377f}
+    .primary:disabled{background:#9aa6bd;cursor:default}
+    .secondary{background:#edf1f8;color:#243b72}
+    .button-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+    .question{font-family:Georgia,serif;font-size:clamp(1.35rem,4vw,1.8rem);line-height:1.3;margin:10px 0 14px}
+    .sentence{background:#f4f6fb;border-left:4px solid var(--blue);border-radius:6px;padding:12px 15px;margin:10px 0 0}
+    .sentence .la{font-family:Georgia,serif;font-size:1.35rem;margin:0 0 2px}
+    .sentence .it{margin:0;color:var(--muted);font-size:.92rem}
+    .choices{display:grid;gap:9px;margin:12px 0}
+    .choices.pairs{grid-template-columns:1fr 1fr}
+    .choice{background:white;border:1px solid #bdc8d6;border-radius:9px;padding:10px 12px;cursor:pointer}
+    .choice:hover{border-color:var(--blue);background:#f2f5ff}
+    .feedback{margin-top:16px;padding:14px;border-radius:10px}
+    .feedback p:last-child{margin-bottom:0}
+    .feedback ul{margin:8px 0 0;padding-left:20px}
+    .good{background:#e8f6ed;color:#165c35}
+    .bad{background:#fff0eb;color:#86351d}
+    .reward{margin-top:8px;font-weight:700}
+    .reward p{margin:0}
+
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;min-width:360px}
+    th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line)}
+    th{font-size:.85rem;color:var(--muted)}
+    td input{min-width:100px}
+    details{border-top:1px solid var(--line);padding:13px 0}
+    summary{cursor:pointer;font-weight:750}
+    details .table-wrap,details p{margin-top:12px}
+
+    .stats{display:flex;gap:14px 28px;flex-wrap:wrap;margin-bottom:8px}
+    .stat strong{display:block;font-size:1.8rem;color:var(--blue);line-height:1.2}
+    .badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;padding:0;margin:10px 0 0;list-style:none}
+    .badge{display:flex;gap:10px;border:1px solid var(--line);border-radius:12px;padding:12px}
+    .badge .icon{font-size:1.6rem;line-height:1.1}
+    .badge p{margin:0}
+    .badge.locked{background:#f3f4f6}
+    .badge.locked .icon{filter:grayscale(1);opacity:.5}
+
+    footer{color:var(--muted);font-size:.83rem;padding:0 0 25px}
+    [hidden]{display:none!important}
+    @media(max-width:650px){
+      header{padding-top:27px}
+      .grid{grid-template-columns:minmax(0,1fr)}
+      .wide{grid-column:auto}
+      .card{padding:18px}
+      nav button{flex:1;padding:11px 8px;font-size:.9rem}
+      .wrap{padding-left:15px;padding-right:15px}
+    }
+  </style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Una palestra per cominciare</div>
+  <h1>Studiamo latino.</h1>
+  <p>Piccoli passi, tante prove. Ripassa la grammatica e mettiti alla prova, dal primo <em>rosa, rosae</em>.</p>
+</div></header>
+
+<div class="wrap">
+  <nav aria-label="Sezioni">
+    <button type="button" data-page="study" aria-current="page">Ripassa</button>
+    <button type="button" data-page="practice">Esercitati</button>
+    <button type="button" data-page="table">Completa la tabella</button>
+    <button type="button" data-page="progress">Progressi</button>
+  </nav>
+  <section class="hud" aria-label="Il tuo percorso">
+    <div class="hud-rank"><strong id="hud-rank">Tiro</strong> <span id="hud-gloss" class="small muted"></span></div>
+    <div class="hud-xp">
+      <div class="bar" id="hud-bar" role="progressbar" aria-label="Avanzamento verso il prossimo grado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="hud-fill"></div></div>
+      <p id="hud-xp" class="small muted"></p>
+    </div>
+    <div class="hud-item" title="Giorni consecutivi con l'obiettivo raggiunto">🔥 <strong id="hud-streak">0</strong> <span id="hud-streak-unit">giorni</span></div>
+    <div class="hud-item" title="Risposte corrette di oggi sull'obiettivo giornaliero">🎯 <strong id="hud-daily">0/10</strong> oggi</div>
+    <div class="hud-item" title="Risposte corrette consecutive">⚡ <strong id="hud-combo">0</strong> di fila</div>
+  </section>
+</div>
+
+<main class="wrap">
+  <p id="storage-warning" class="warning small" role="status" hidden></p>
+
+  <section id="study" aria-labelledby="study-title">
+    <span class="tag">Inizia da qui</span>
+    <h2 id="study-title">Le basi, con calma.</h2>
+    <p class="intro">Le parole latine cambiano forma per esprimere la loro funzione nella frase. Qui trovi un punto di partenza: affiancalo al manuale e al programma del corso.</p>
+    <div class="grid">
+      <article class="card wide">
+        <h3>I sei casi</h3>
+        <p class="muted small">Sono funzioni frequenti, non traduzioni automatiche: il contesto e le preposizioni contano.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Caso</th><th>Funzione frequente</th><th>Esempio</th></tr></thead>
+          <tbody>
+            <tr><td>Nominativo</td><td>Soggetto, nome del predicato</td><td><em>Rosa</em> pulchra est: la rosa è bella.</td></tr>
+            <tr><td>Genitivo</td><td>Specificazione</td><td>Color <em>rosae</em>: il colore della rosa.</td></tr>
+            <tr><td>Dativo</td><td>Termine</td><td>Puella <em>amicae</em> rosam dat: la ragazza dà una rosa all'amica.</td></tr>
+            <tr><td>Accusativo</td><td>Oggetto diretto</td><td>Puella <em>rosam</em> videt: la ragazza vede la rosa.</td></tr>
+            <tr><td>Vocativo</td><td>Persona o cosa chiamata</td><td><em>Amica</em>, veni!: amica, vieni!</td></tr>
+            <tr><td>Ablativo</td><td>Mezzo, causa e altre funzioni</td><td>Puella capillos <em>rosa</em> ornat: la ragazza adorna i capelli con una rosa.</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+
+      <article class="card wide">
+        <span class="tag">Casi e preposizioni</span>
+        <h3>I complementi più comuni</h3>
+        <p class="muted small">Molti complementi si riconoscono dalla preposizione e dal caso che la segue. Sono le costruzioni di base: con i nomi di città e in altri usi valgono regole particolari.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Complemento</th><th>Costruzione</th><th>Esempio</th></tr></thead>
+          <tbody>
+            <tr><td>Stato in luogo</td><td><em>in</em> + ablativo</td><td><em>in silva</em>: nel bosco</td></tr>
+            <tr><td>Moto a luogo</td><td><em>in</em>, <em>ad</em> + accusativo</td><td><em>ad insulam</em>: verso l'isola</td></tr>
+            <tr><td>Moto da luogo</td><td><em>a/ab</em>, <em>e/ex</em>, <em>de</em> + ablativo</td><td><em>e schola</em>: dalla scuola</td></tr>
+            <tr><td>Compagnia</td><td><em>cum</em> + ablativo</td><td><em>cum amicis</em>: con gli amici</td></tr>
+            <tr><td>Mezzo (cose)</td><td>ablativo semplice</td><td><em>gladio</em>: con la spada</td></tr>
+            <tr><td>Agente</td><td><em>a/ab</em> + ablativo</td><td><em>a militibus</em>: dai soldati</td></tr>
+            <tr><td>Argomento</td><td><em>de</em> + ablativo</td><td><em>de bello</em>: sulla guerra</td></tr>
+            <tr><td>Tempo determinato</td><td>ablativo semplice</td><td><em>nocte</em>: di notte</td></tr>
+            <tr><td>Tempo continuato</td><td>accusativo semplice</td><td><em>multos annos</em>: per molti anni</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+
+      <article class="card">
+        <span class="tag">Sostantivi</span>
+        <h3>Le cinque declinazioni</h3>
+        <p>Il genitivo singolare aiuta a riconoscere la declinazione: <strong>-ae, -i, -is, -us, -ei</strong>. La terza comprende tipi diversi: confronta <em>rex</em>, <em>civis</em>, <em>corpus</em> e <em>mare</em>.</p>
+        <p>Per i neutri, nominativo, accusativo e vocativo coincidono; al plurale terminano in <strong>-a</strong> (o <strong>-ia</strong>, <strong>-ua</strong>).</p>
+      </article>
+      <article class="card">
+        <span class="tag">Accordo</span>
+        <h3>Aggettivi</h3>
+        <p>L'aggettivo concorda con il sostantivo in <strong>genere, numero e caso</strong>, non necessariamente nella declinazione. Ad esempio: <em>rosa bona</em>, ma <em>rosam bonam</em>.</p>
+        <p>Prima classe: <em>bonus, bona, bonum</em>. Seconda classe: <em>fortis, forte</em>.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Parole al posto dei nomi</span>
+        <h3>Pronomi</h3>
+        <p>I pronomi possono sostituire un nome. <em>Ego</em> significa «io», <em>tu</em> «tu»: le forme cambiano secondo il caso, per esempio <em>ego → mei → mihi → me</em>.</p>
+        <p class="small muted">I pronomi personali di prima e seconda persona non hanno un vocativo autonomo: negli esercizi quella casella è esclusa.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Azioni e stati</span>
+        <h3>Verbi</h3>
+        <p>Il verbo cambia per persona, numero, tempo, modo e diatesi. Si parte dall'<strong>indicativo attivo</strong>: presente (<em>amo</em>, «amo»), imperfetto (<em>amabam</em>, «amavo») e futuro semplice (<em>amabo</em>, «amerò»).</p>
+        <p>Le quattro coniugazioni si distinguono dall'infinito: <em>amare, monere, regere, audire</em>. Qui trovi anche il tipo in -io (<em>capere</em>) e l'irregolare <em>esse</em>.</p>
+      </article>
+
+      <article class="card wide">
+        <h3>Tabelle dei modelli</h3>
+        <p class="small muted">Apri un modello per consultarne le forme. Le altre parole degli esercizi seguono questi modelli. Le vocali lunghe non sono indicate.</p>
+        <div id="reference"></div>
+      </article>
+
+      <article class="card wide">
+        <h3>Come usare questa pagina</h3>
+        <p>In <strong>Esercitati</strong> scegli argomento, tipo di esercizio e risposta scritta o a scelta multipla. In «Casi nelle frasi» i casi si studiano dentro frasi vere. In <strong>Completa la tabella</strong> declini un sostantivo per intero.</p>
+        <p>Ogni risposta corretta vale <strong>10 XP</strong> (punti esperienza), più un bonus se ne indovini diverse di fila. Con gli XP sali di grado, da <em>Tiro</em> a <em>Imperator</em>. L'obiettivo è di <strong>10 risposte corrette al giorno</strong>: raggiungilo in giorni consecutivi per allungare la serie. Gli errori vengono riproposti più spesso.</p>
+        <p class="small muted">Il materiale è introduttivo e comprende solo i modelli mostrati, non tutte le eccezioni o l'intera grammatica latina. Le risposte non richiedono i segni di quantità. I progressi sono salvati solo nel browser, se consentito.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="practice" hidden aria-labelledby="practice-title">
+    <span class="tag">Allenamento</span>
+    <h2 id="practice-title">Una domanda alla volta.</h2>
+    <p class="intro">Scegli cosa ripassare. Una stessa forma può corrispondere a più casi: nell'analisi indicali tutti.</p>
+    <div class="card">
+      <div class="controls">
+        <div class="field"><label for="topic">Argomento</label>
+          <select id="topic">
+            <optgroup label="Sostantivi">
+              <option value="d1" selected>1ª declinazione</option>
+              <option value="d2">2ª declinazione</option>
+              <option value="d3">3ª declinazione</option>
+              <option value="d4">4ª declinazione</option>
+              <option value="d5">5ª declinazione</option>
+              <option value="nouns">Tutte le declinazioni</option>
+            </optgroup>
+            <optgroup label="Casi">
+              <option value="sentences">Casi nelle frasi</option>
+              <option value="cases">Funzioni dei casi e preposizioni</option>
+            </optgroup>
+            <optgroup label="Aggettivi e pronomi">
+              <option value="adjectives">Aggettivi</option>
+              <option value="pronouns">Pronomi personali</option>
+            </optgroup>
+            <optgroup label="Verbi · indicativo attivo">
+              <option value="verbs-pres">Presente</option>
+              <option value="verbs-impf">Imperfetto</option>
+              <option value="verbs-fut">Futuro semplice</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field"><label for="exercise-kind">Tipo di esercizio</label>
+          <select id="exercise-kind">
+            <option value="form">Forma la parola</option>
+            <option value="identify">Analizza la forma</option>
+          </select>
+        </div>
+        <div class="field"><label for="answer-mode">Risposta</label>
+          <select id="answer-mode">
+            <option value="write">Scritta</option>
+            <option value="choice">Scelta multipla</option>
+          </select>
+        </div>
+        <button class="secondary" type="button" id="new-question">Cambia domanda</button>
+      </div>
+      <div id="question-area" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="table" hidden aria-labelledby="table-title">
+    <span class="tag">Ripasso attivo</span>
+    <h2 id="table-title">Completa la tabella.</h2>
+    <p class="intro">Scrivi tutte le forme del sostantivo scelto, poi controlla: ogni forma giusta vale 2 XP, con un bonus se la tabella è perfetta.</p>
+    <div class="card">
+      <div class="controls">
+        <div class="field"><label for="table-word">Sostantivo</label><select id="table-word"></select></div>
+        <button type="button" class="secondary" id="clear-table">Ricomincia</button>
+      </div>
+      <form id="table-form">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Caso</th><th>Singolare</th><th>Plurale</th></tr></thead>
+          <tbody id="table-body"></tbody>
+        </table></div>
+        <div class="button-row"><button type="submit" class="primary" id="check-table">Controlla la tabella</button></div>
+        <div id="table-result" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+
+  <section id="progress" hidden aria-labelledby="progress-title">
+    <span class="tag">Il tuo percorso</span>
+    <h2 id="progress-title">I tuoi progressi.</h2>
+    <p class="intro">I risultati restano su questo browser e dispositivo: non si sincronizzano.</p>
+    <div class="card">
+      <div id="stats"></div>
+      <div class="button-row"><button type="button" id="reset-progress" class="secondary">Azzera i progressi</button></div>
+      <p id="storage-status" class="warning small" role="status"></p>
+    </div>
+  </section>
+</main>
+<footer class="wrap">Un piccolo strumento di studio · Funziona anche senza connessione · Nessun account</footer>
+
+<script>
+"use strict";
+
+/* ============================================================
+   1. GRAMMATICA
+   Le forme non sono scritte a mano: ogni parola indica il proprio
+   modello e le forme nascono dalle desinenze. Così aggiungere una
+   parola costa una riga e ogni parola genera decine di domande.
+   ============================================================ */
+
+const cases = ["Nominativo", "Genitivo", "Dativo", "Accusativo", "Vocativo", "Ablativo"];
+const persons = ["1ª persona singolare", "2ª persona singolare", "3ª persona singolare", "1ª persona plurale", "2ª persona plurale", "3ª persona plurale"];
+const genders = {m: "maschile", f: "femminile", n: "neutro"};
+const numberName = n => n === 0 ? "singolare" : "plurale";
+const withArticle = name => (/^[AEIOU]/.test(name) ? "l'" : "il ") + name.toLowerCase();
+
+// Desinenze nell'ordine dei casi; "=" significa «uguale al nominativo singolare».
+const patterns = {
+  "1":   {sg: ["=", "ae", "ae", "am", "=", "a"], pl: ["ae", "arum", "is", "as", "ae", "is"]},
+  "2us": {sg: ["=", "i", "o", "um", "e", "o"],   pl: ["i", "orum", "is", "os", "i", "is"]},
+  "2er": {sg: ["=", "i", "o", "um", "=", "o"],   pl: ["i", "orum", "is", "os", "i", "is"]},
+  "2n":  {sg: ["=", "i", "o", "=", "=", "o"],    pl: ["a", "orum", "is", "a", "a", "is"]},
+  "3":   {sg: ["=", "is", "i", "em", "=", "e"],  pl: ["es", "um", "ibus", "es", "es", "ibus"]},
+  "3i":  {sg: ["=", "is", "i", "em", "=", "e"],  pl: ["es", "ium", "ibus", "es", "es", "ibus"]},
+  "3n":  {sg: ["=", "is", "i", "=", "=", "e"],   pl: ["a", "um", "ibus", "a", "a", "ibus"]},
+  "3ni": {sg: ["=", "is", "i", "=", "=", "i"],   pl: ["ia", "ium", "ibus", "ia", "ia", "ibus"]},
+  "a3":  {sg: ["=", "is", "i", "em", "=", "i"],  pl: ["es", "ium", "ibus", "es", "es", "ibus"]},
+  "4":   {sg: ["=", "us", "ui", "um", "=", "u"], pl: ["us", "uum", "ibus", "us", "us", "ibus"]},
+  "4n":  {sg: ["=", "us", "u", "=", "=", "u"],   pl: ["ua", "uum", "ibus", "ua", "ua", "ibus"]},
+  "5":   {sg: ["=", "ei", "ei", "em", "=", "e"], pl: ["es", "erum", "ebus", "es", "es", "ebus"]}
+};
+
+function decline(nominative, stem, pattern) {
+  const endings = patterns[pattern];
+  return cases.map((_, c) => [endings.sg[c] === "=" ? nominative : stem + endings.sg[c], stem + endings.pl[c]]);
+}
+
+function noun(decl, nominative, stem, pattern, gender, italian, model = false) {
+  const forms = decline(nominative, stem, pattern);
+  return {id: nominative, short: nominative, decl, forms, model, label: `${nominative}, ${forms[1][0]} (${gender}.) · ${italian}`};
+}
+
+// Parole scelte perché regolari: niente filia, deus, domus e simili.
+const nouns = [
+  noun(1, "rosa", "ros", "1", "f", "rosa", true),
+  noun(1, "puella", "puell", "1", "f", "ragazza"),
+  noun(1, "aqua", "aqu", "1", "f", "acqua"),
+  noun(1, "terra", "terr", "1", "f", "terra"),
+  noun(1, "via", "vi", "1", "f", "strada"),
+  noun(1, "silva", "silv", "1", "f", "bosco"),
+  noun(1, "poeta", "poet", "1", "m", "poeta"),
+  noun(1, "nauta", "naut", "1", "m", "marinaio"),
+  noun(2, "servus", "serv", "2us", "m", "schiavo", true),
+  noun(2, "amicus", "amic", "2us", "m", "amico"),
+  noun(2, "dominus", "domin", "2us", "m", "padrone"),
+  noun(2, "lupus", "lup", "2us", "m", "lupo"),
+  noun(2, "puer", "puer", "2er", "m", "ragazzo", true),
+  noun(2, "ager", "agr", "2er", "m", "campo"),
+  noun(2, "magister", "magistr", "2er", "m", "maestro"),
+  noun(2, "liber", "libr", "2er", "m", "libro"),
+  noun(2, "templum", "templ", "2n", "n", "tempio", true),
+  noun(2, "bellum", "bell", "2n", "n", "guerra"),
+  noun(2, "donum", "don", "2n", "n", "dono"),
+  noun(2, "verbum", "verb", "2n", "n", "parola"),
+  noun(3, "rex", "reg", "3", "m", "re", true),
+  noun(3, "miles", "milit", "3", "m", "soldato"),
+  noun(3, "consul", "consul", "3", "m", "console"),
+  noun(3, "homo", "homin", "3", "m", "uomo"),
+  noun(3, "mater", "matr", "3", "f", "madre"),
+  noun(3, "pater", "patr", "3", "m", "padre"),
+  noun(3, "lex", "leg", "3", "f", "legge"),
+  noun(3, "virtus", "virtut", "3", "f", "valore"),
+  noun(3, "civis", "civ", "3i", "m", "cittadino", true),
+  noun(3, "urbs", "urb", "3i", "f", "città"),
+  noun(3, "mons", "mont", "3i", "m", "monte"),
+  noun(3, "nox", "noct", "3i", "f", "notte"),
+  noun(3, "corpus", "corpor", "3n", "n", "corpo", true),
+  noun(3, "nomen", "nomin", "3n", "n", "nome"),
+  noun(3, "tempus", "tempor", "3n", "n", "tempo"),
+  noun(3, "flumen", "flumin", "3n", "n", "fiume"),
+  noun(3, "mare", "mar", "3ni", "n", "mare", true),
+  noun(3, "animal", "animal", "3ni", "n", "animale"),
+  noun(4, "manus", "man", "4", "f", "mano", true),
+  noun(4, "exercitus", "exercit", "4", "m", "esercito"),
+  noun(4, "fructus", "fruct", "4", "m", "frutto"),
+  noun(4, "cornu", "corn", "4n", "n", "corno", true),
+  noun(5, "dies", "di", "5", "m", "giorno", true),
+  noun(5, "res", "r", "5", "f", "cosa")
+];
+
+// Un aggettivo è declinato tre volte, una per genere: ogni genere segue un modello dei sostantivi.
+function adjective(id, italian, model, m, f, n) {
+  const entry = `${m[0]}, ${f[0]}, ${n[0]} · ${italian}`;
+  return [["m", m], ["f", f], ["n", n]].map(([gender, [nominative, stem, pattern]]) => ({
+    id: `${id}-${gender}`, short: nominative, model,
+    forms: decline(nominative, stem, pattern),
+    label: `${entry} — ${genders[gender]}`
+  }));
+}
+const adjectives = [
+  ...adjective("bonus", "buono", true, ["bonus", "bon", "2us"], ["bona", "bon", "1"], ["bonum", "bon", "2n"]),
+  ...adjective("magnus", "grande", false, ["magnus", "magn", "2us"], ["magna", "magn", "1"], ["magnum", "magn", "2n"]),
+  ...adjective("pulcher", "bello", false, ["pulcher", "pulchr", "2er"], ["pulchra", "pulchr", "1"], ["pulchrum", "pulchr", "2n"]),
+  ...adjective("fortis", "forte", true, ["fortis", "fort", "a3"], ["fortis", "fort", "a3"], ["forte", "fort", "3ni"]),
+  ...adjective("omnis", "ogni, tutto", false, ["omnis", "omn", "a3"], ["omnis", "omn", "a3"], ["omne", "omn", "3ni"])
+];
+
+// I pronomi personali sono irregolari: qui le forme restano scritte per esteso.
+const pronouns = [
+  {id: "ego", short: "ego", label: "ego / nos · io / noi",
+   forms: [["ego", "nos"], ["mei", "nostri"], ["mihi", "nobis"], ["me", "nos"], [null, null], ["me", "nobis"]],
+   alternates: {"1-1": ["nostrum"]},
+   note: "Il genitivo plurale nostrum è usato soprattutto con valore partitivo; negli altri usi si trova nostri."},
+  {id: "tu", short: "tu", label: "tu / vos · tu / voi",
+   forms: [["tu", "vos"], ["tui", "vestri"], ["tibi", "vobis"], ["te", "vos"], [null, null], ["te", "vobis"]],
+   alternates: {"1-1": ["vestrum"]},
+   note: "Il genitivo plurale vestrum è usato soprattutto con valore partitivo; negli altri usi si trova vestri."}
+];
+
+const tenses = {
+  pres: {name: "presente", of: "del presente"},
+  impf: {name: "imperfetto", of: "dell'imperfetto"},
+  fut:  {name: "futuro semplice", of: "del futuro semplice"}
+};
+const imperfectEndings = ["m", "s", "t", "mus", "tis", "nt"];
+const conjugations = {
+  "1": {pres: ["o", "as", "at", "amus", "atis", "ant"],  impf: "aba",  fut: ["abo", "abis", "abit", "abimus", "abitis", "abunt"]},
+  "2": {pres: ["eo", "es", "et", "emus", "etis", "ent"], impf: "eba",  fut: ["ebo", "ebis", "ebit", "ebimus", "ebitis", "ebunt"]},
+  "3": {pres: ["o", "is", "it", "imus", "itis", "unt"],  impf: "eba",  fut: ["am", "es", "et", "emus", "etis", "ent"]},
+  "4": {pres: ["io", "is", "it", "imus", "itis", "iunt"], impf: "ieba", fut: ["iam", "ies", "iet", "iemus", "ietis", "ient"]}
+};
+
+function verb(conjugation, first, stem, infinitive, italian, model = false) {
+  const endings = conjugations[conjugation];
+  return {id: first, model, label: `${first}, ${infinitive} · ${italian}`, tenses: {
+    pres: endings.pres.map(e => stem + e),
+    impf: imperfectEndings.map(e => stem + endings.impf + e),
+    fut: endings.fut.map(e => stem + e)
+  }};
+}
+
+// capio e facio (3ª in -io) hanno in questi tre tempi le stesse desinenze della 4ª.
+const verbs = [
+  verb("1", "amo", "am", "amare", "amare", true),
+  verb("1", "laudo", "laud", "laudare", "lodare"),
+  verb("1", "voco", "voc", "vocare", "chiamare"),
+  verb("2", "moneo", "mon", "monere", "ammonire", true),
+  verb("2", "video", "vid", "videre", "vedere"),
+  verb("2", "habeo", "hab", "habere", "avere"),
+  verb("3", "rego", "reg", "regere", "reggere", true),
+  verb("3", "lego", "leg", "legere", "leggere"),
+  verb("3", "mitto", "mitt", "mittere", "mandare"),
+  verb("3", "duco", "duc", "ducere", "condurre"),
+  verb("4", "audio", "aud", "audire", "udire", true),
+  verb("4", "venio", "ven", "venire", "venire"),
+  verb("4", "capio", "cap", "capere", "prendere", true),
+  verb("4", "facio", "fac", "facere", "fare"),
+  {id: "sum", model: true, label: "sum, esse · essere", tenses: {
+    pres: ["sum", "es", "est", "sumus", "estis", "sunt"],
+    impf: ["eram", "eras", "erat", "eramus", "eratis", "erant"],
+    fut: ["ero", "eris", "erit", "erimus", "eritis", "erunt"]
+  }}
+];
+
+/* I casi dentro le frasi. La parola tra graffe è quella da analizzare o da
+   inserire; c è l'indice del caso, n il numero (0 singolare, 1 plurale).
+   Le forme sbagliate sono scelte perché, messe nella frase, non reggono. */
+const sentences = [
+  {id: "rosam", s: "Puella {rosam} videt.", it: "La ragazza vede la rosa.", c: 3, n: 0, role: "complemento oggetto", lemma: "rosa, rosae", wrong: ["rosa", "rosae", "rosis"]},
+  {id: "discipulos", s: "Magister {discipulos} laudat.", it: "Il maestro loda gli allievi.", c: 3, n: 1, role: "complemento oggetto", lemma: "discipulus, discipuli", wrong: ["discipuli", "discipulis", "discipulorum"]},
+  {id: "agricola", s: "{Agricola} terram arat.", it: "Il contadino ara la terra.", c: 0, n: 0, role: "soggetto", lemma: "agricola, agricolae", wrong: ["agricolam", "agricolae", "agricolis"]},
+  {id: "pueri-gen", s: "Liber {pueri} novus est.", it: "Il libro del ragazzo è nuovo.", c: 1, n: 0, role: "complemento di specificazione", lemma: "puer, pueri", wrong: ["puerum", "pueros", "puer"]},
+  {id: "amico", s: "Puella {amico} donum dat.", it: "La ragazza dà un dono all'amico.", c: 2, n: 0, role: "complemento di termine", lemma: "amicus, amici", wrong: ["amicum", "amicus", "amicos"]},
+  {id: "domine", s: "{Domine}, servum voca!", it: "Padrone, chiama lo schiavo!", c: 4, n: 0, role: "complemento di vocazione", lemma: "dominus, domini", wrong: ["dominus", "dominum", "domini"]},
+  {id: "gladiis", s: "Milites {gladiis} pugnant.", it: "I soldati combattono con le spade.", c: 5, n: 1, role: "complemento di mezzo", lemma: "gladius, gladii", wrong: ["gladios", "gladii", "gladium"]},
+  {id: "militibus-dat", s: "Rex {militibus} praemia dat.", it: "Il re dà premi ai soldati.", c: 2, n: 1, role: "complemento di termine", lemma: "miles, militis", wrong: ["milites", "militem", "miles"]},
+  {id: "amicis", s: "Poeta cum {amicis} ambulat.", it: "Il poeta passeggia con gli amici.", c: 5, n: 1, role: "complemento di compagnia (cum + ablativo)", lemma: "amicus, amici", wrong: ["amicos", "amici", "amicorum"]},
+  {id: "silva", s: "Pueri in {silva} ludunt.", it: "I ragazzi giocano nel bosco.", c: 5, n: 0, role: "stato in luogo (in + ablativo)", lemma: "silva, silvae", wrong: ["silvam", "silvae", "silvarum"]},
+  {id: "insulam", s: "Nautae ad {insulam} navigant.", it: "I marinai navigano verso l'isola.", c: 3, n: 0, role: "moto a luogo (ad + accusativo)", lemma: "insula, insulae", wrong: ["insula", "insulae", "insulis"]},
+  {id: "militum", s: "Victoria {militum} magna est.", it: "La vittoria dei soldati è grande.", c: 1, n: 1, role: "complemento di specificazione", lemma: "miles, militis", wrong: ["milites", "militem", "miles"]},
+  {id: "urbs", s: "Roma {urbs} magna est.", it: "Roma è una grande città.", c: 0, n: 0, role: "nome del predicato", lemma: "urbs, urbis", wrong: ["urbem", "urbis", "urbe"]},
+  {id: "urbem-obj", s: "Hostes {urbem} oppugnant.", it: "I nemici assaltano la città.", c: 3, n: 0, role: "complemento oggetto", lemma: "urbs, urbis", wrong: ["urbs", "urbi", "urbe"]},
+  {id: "amici", s: "{Amici}, venite!", it: "Amici, venite!", c: 4, n: 1, role: "complemento di vocazione", lemma: "amicus, amici", wrong: ["amicos", "amicis", "amicorum"]},
+  {id: "filio", s: "Mater {filio} fabulam narrat.", it: "La madre racconta una favola al figlio.", c: 2, n: 0, role: "complemento di termine", lemma: "filius, filii", wrong: ["filium", "filius", "filios"]},
+  {id: "urbem-in", s: "Consul in {urbem} venit.", it: "Il console viene in città.", c: 3, n: 0, role: "moto a luogo (in + accusativo)", lemma: "urbs, urbis", wrong: ["urbe", "urbis", "urbs"]},
+  {id: "nocte", s: "{Nocte} stellae lucent.", it: "Di notte brillano le stelle.", c: 5, n: 0, role: "tempo determinato", lemma: "nox, noctis", wrong: ["nox", "noctem", "nocti"]},
+  {id: "militibus-ag", s: "Urbs a {militibus} defenditur.", it: "La città è difesa dai soldati.", c: 5, n: 1, role: "complemento d'agente (a/ab + ablativo)", lemma: "miles, militis", wrong: ["milites", "militum", "militem"]},
+  {id: "exercitum", s: "Dux {exercitum} ducit.", it: "Il comandante guida l'esercito.", c: 3, n: 0, role: "complemento oggetto", lemma: "exercitus, exercitus", wrong: ["exercitui", "exercitu", "exercituum"]},
+  {id: "victoriae", s: "Spes {victoriae} magna est.", it: "La speranza della vittoria è grande.", c: 1, n: 0, role: "complemento di specificazione", lemma: "victoria, victoriae", wrong: ["victoriam", "victorias", "victoriis"]},
+  {id: "pueri-nom", s: "{Pueri} magistrum timent.", it: "I ragazzi temono il maestro.", c: 0, n: 1, role: "soggetto", lemma: "puer, pueri", wrong: ["puerum", "pueros", "puero"]},
+  {id: "servis", s: "Dominus {servis} cibum dat.", it: "Il padrone dà il cibo agli schiavi.", c: 2, n: 1, role: "complemento di termine", lemma: "servus, servi", wrong: ["servos", "servus", "servum"]},
+  {id: "manibus", s: "{Manibus} laboramus.", it: "Lavoriamo con le mani.", c: 5, n: 1, role: "complemento di mezzo", lemma: "manus, manus", wrong: ["manus", "manuum", "manum"]},
+  {id: "amice", s: "{Amice}, epistulam lege!", it: "Amico, leggi la lettera!", c: 4, n: 0, role: "complemento di vocazione", lemma: "amicus, amici", wrong: ["amicus", "amicum", "amico"]},
+  {id: "puellae", s: "Nomen {puellae} Iulia est.", it: "Il nome della ragazza è Giulia.", c: 1, n: 0, role: "complemento di specificazione", lemma: "puella, puellae", wrong: ["puellam", "puella", "puellas"]},
+  {id: "flumina", s: "{Flumina} ad mare fluunt.", it: "I fiumi scorrono verso il mare.", c: 0, n: 1, role: "soggetto", lemma: "flumen, fluminis", wrong: ["flumen", "fluminis", "fluminibus"]},
+  {id: "annos", s: "Rex multos {annos} regnat.", it: "Il re regna per molti anni.", c: 3, n: 1, role: "tempo continuato", lemma: "annus, anni", wrong: ["anni", "annis", "annorum"]},
+  {id: "schola", s: "Puer e {schola} venit.", it: "Il ragazzo viene dalla scuola.", c: 5, n: 0, role: "moto da luogo (e/ex + ablativo)", lemma: "schola, scholae", wrong: ["scholam", "scholae", "scholas"]},
+  {id: "gaudio", s: "Puella {gaudio} lacrimat.", it: "La ragazza piange di gioia.", c: 5, n: 0, role: "complemento di causa", lemma: "gaudium, gaudii", wrong: ["gaudium", "gaudii", "gaudia"]},
+  {id: "bello", s: "Discipuli de {bello} legunt.", it: "Gli allievi leggono della guerra.", c: 5, n: 0, role: "complemento di argomento (de + ablativo)", lemma: "bellum, belli", wrong: ["bellum", "belli", "bella"]},
+  {id: "arborum", s: "Fructus {arborum} dulces sunt.", it: "I frutti degli alberi sono dolci.", c: 1, n: 1, role: "complemento di specificazione", lemma: "arbor, arboris", wrong: ["arbores", "arborem", "arbor"]},
+  {id: "civibus", s: "Patria {civibus} cara est.", it: "La patria è cara ai cittadini.", c: 2, n: 1, role: "complemento di termine («cara a chi?»)", lemma: "civis, civis", wrong: ["cives", "civem", "cive"]}
+];
+
+// Teoria dei casi: [id, domanda, indice del caso, spiegazione].
+const caseFunctions = [
+  ["subject", "Quale caso esprime il soggetto?", 0, "Il soggetto va al nominativo."],
+  ["predicate", "In quale caso va il nome del predicato, come «urbs» in «Roma urbs est»?", 0, "Il nome del predicato concorda con il soggetto: nominativo."],
+  ["specification", "Quale caso esprime il complemento di specificazione («di chi? di che cosa?»)?", 1, "Il genitivo esprime la specificazione: color rosae, il colore della rosa."],
+  ["partitive", "Quale caso esprime il partitivo in «pars militum» (una parte dei soldati)?", 1, "Il genitivo può indicare il tutto di cui si considera una parte."],
+  ["recipient", "Quale caso esprime il complemento di termine («a chi? a che cosa?»)?", 2, "Il dativo esprime il destinatario: amico, all'amico."],
+  ["advantage", "Quale caso esprime, senza preposizione, la persona a vantaggio della quale si agisce?", 2, "Il dativo esprime anche il vantaggio o lo svantaggio."],
+  ["object", "Quale caso esprime il complemento oggetto?", 3, "L'oggetto diretto va all'accusativo: rosam videt."],
+  ["motion-to", "Dopo «in» o «ad», quale caso esprime il moto a luogo?", 3, "Moto a luogo: in / ad + accusativo (ad insulam)."],
+  ["duration", "Quale caso esprime il tempo continuato («per quanto tempo?»), come in «multos annos»?", 3, "Il tempo continuato si esprime con l'accusativo."],
+  ["address", "Quale caso si usa per rivolgersi direttamente a qualcuno?", 4, "Il vocativo serve a chiamare: Domine!"],
+  ["means", "Quale caso esprime, senza preposizione, il mezzo con cui si compie un'azione?", 5, "Il mezzo (per le cose) va all'ablativo semplice: gladio."],
+  ["company", "Dopo «cum», quale caso esprime il complemento di compagnia?", 5, "Compagnia: cum + ablativo (cum amicis)."],
+  ["place-in", "Dopo «in», quale caso esprime lo stato in luogo?", 5, "Stato in luogo: in + ablativo (in silva)."],
+  ["motion-from", "Dopo «a/ab», «e/ex» o «de», quale caso esprime il moto da luogo?", 5, "Moto da luogo: a/ab, e/ex, de + ablativo (e schola)."],
+  ["agent", "Dopo «a/ab», quale caso esprime il complemento d'agente nella frase passiva?", 5, "Agente: a/ab + ablativo (a militibus)."],
+  ["time-when", "Quale caso esprime, senza preposizione, il tempo determinato («quando?»), come in «nocte»?", 5, "Il tempo determinato va all'ablativo semplice."],
+  ["topic", "Dopo «de», quale caso esprime il complemento di argomento?", 5, "Argomento: de + ablativo (de bello)."],
+  ["prep-cum", "Quale caso regge la preposizione «cum» (con)?", 5, "cum + ablativo: cum amicis."],
+  ["prep-ad", "Quale caso regge la preposizione «ad» (a, verso)?", 3, "ad + accusativo: ad insulam."],
+  ["prep-per", "Quale caso regge la preposizione «per» (attraverso)?", 3, "per + accusativo: per silvam."],
+  ["prep-sine", "Quale caso regge la preposizione «sine» (senza)?", 5, "sine + ablativo: sine amicis."],
+  ["prep-ex", "Quale caso regge la preposizione «e/ex» (da, fuori da)?", 5, "e/ex + ablativo: e schola."],
+  ["prep-ab", "Quale caso regge la preposizione «a/ab» (da)?", 5, "a/ab + ablativo: a militibus."],
+  ["prep-de", "Quale caso regge la preposizione «de» (da, riguardo a)?", 5, "de + ablativo: de bello."],
+  ["prep-post", "Quale caso regge la preposizione «post» (dopo)?", 3, "post + accusativo: post bellum."],
+  ["prep-ante", "Quale caso regge la preposizione «ante» (prima, davanti)?", 3, "ante + accusativo: ante templum."],
+  ["prep-inter", "Quale caso regge la preposizione «inter» (tra)?", 3, "inter + accusativo: inter amicos."],
+  ["prep-apud", "Quale caso regge la preposizione «apud» (presso)?", 3, "apud + accusativo: apud amicum."],
+  ["prep-pro", "Quale caso regge la preposizione «pro» (davanti a, in difesa di)?", 5, "pro + ablativo: pro patria."]
+];
+
+/* ============================================================
+   2. DOMANDE
+   Ogni esercizio diventa una lista di domande con la stessa forma:
+   così un solo motore le mostra, le corregge e le premia.
+   ============================================================ */
+
+const $ = id => document.getElementById(id);
+const normalize = value => value.trim().toLocaleLowerCase("it").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
+
+function shuffle(list) {
+  const result = [...list];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+function el(tag, text, className) {
+  const element = document.createElement(tag);
+  if (text) element.textContent = text;
+  if (className) element.className = className;
+  return element;
+}
+
+const acceptedForms = (word, c, n) => word.forms[c][n] ? [word.forms[c][n], ...(word.alternates?.[`${c}-${n}`] || [])] : [];
+
+// «Qual è l'accusativo singolare di rosa?»
+function formQuestions(words, statOf) {
+  return words.flatMap(word => cases.flatMap((caseName, c) => [0, 1].flatMap(n => {
+    const answers = acceptedForms(word, c, n);
+    if (!answers.length) return [];
+    return [{
+      id: `form-${word.id}-${c}-${n}`, stat: statOf(word), caseName, context: word.label,
+      prompt: `Qual è ${withArticle(caseName)} ${numberName(n)} di «${word.short}»?`,
+      answers, distractors: word.forms.flat().filter(Boolean),
+      explanation: `${caseName} ${numberName(n)}: ${answers.join(" / ")}.${answers.length > 1 ? " " + word.note : ""}`
+    }];
+  })));
+}
+
+// «rosae: che casi può esprimere?» La risposta è l'insieme di tutte le analisi possibili.
+function identifyQuestions(words, statOf) {
+  return words.flatMap(word => {
+    const readings = new Map();
+    cases.forEach((caseName, c) => [0, 1].forEach(n => {
+      for (const form of acceptedForms(word, c, n)) {
+        if (!readings.has(form)) readings.set(form, []);
+        readings.get(form).push(`${caseName} ${numberName(n)}`);
+      }
+    }));
+    return [...readings].map(([form, answers]) => ({
+      id: `identify-${word.id}-${form}`, stat: statOf(word), context: word.label, multi: true,
+      prompt: `Quali casi e numeri può esprimere «${form}»?`,
+      answers, explanation: `${form}: ${answers.join(", ")}.`
+    }));
+  });
+}
+
+function verbQuestions(tense) {
+  return verbs.flatMap(v => v.tenses[tense].map((form, i) => ({
+    id: `verb-${tense}-${v.id}-${i}`, stat: "Verbi", context: `${v.label} — indicativo ${tenses[tense].name} attivo`,
+    prompt: `Qual è la ${persons[i]} ${tenses[tense].of} di «${v.id}»?`,
+    answers: [form], distractors: Object.values(v.tenses).flat(),
+    explanation: `${persons[i]} dell'indicativo ${tenses[tense].name}: ${form}.`
+  })));
+}
+
+function caseFunctionQuestions() {
+  return caseFunctions.map(([id, prompt, c, explanation]) => ({
+    id: `case-${id}`, stat: "Funzioni dei casi", caseName: cases[c],
+    prompt, answers: [cases[c]], options: cases, explanation
+  }));
+}
+
+function sentenceQuestions(kind) {
+  return sentences.map(x => {
+    const word = x.s.match(/\{(.+?)\}/)[1];
+    const shared = {
+      stat: "Casi nelle frasi", caseName: cases[x.c], sentence: x,
+      explanation: `${word}: ${cases[x.c].toLowerCase()} ${numberName(x.n)}, ${x.role}.`
+    };
+    return kind === "identify"
+      ? {...shared, id: `sent-case-${x.id}`, prompt: `In che caso è «${word}»?`, answers: [cases[x.c]], options: cases}
+      : {...shared, id: `sent-fill-${x.id}`, blank: true, prompt: `Completa la frase con la forma giusta di «${x.lemma}».`, answers: [word], distractors: x.wrong};
+  });
+}
+
+function makeDeck(topic, kind) {
+  if (topic === "sentences") return sentenceQuestions(kind);
+  if (topic === "cases") return caseFunctionQuestions();
+  if (topic.startsWith("verbs-")) return verbQuestions(topic.slice(6));
+  const build = kind === "identify" ? identifyQuestions : formQuestions;
+  if (topic === "adjectives") return build(adjectives, () => "Aggettivi");
+  if (topic === "pronouns") return build(pronouns, () => "Pronomi");
+  const selected = topic === "nouns" ? nouns : nouns.filter(word => word.decl === Number(topic.slice(1)));
+  return build(selected, word => `${word.decl}ª declinazione`);
+}
+
+// Solo i sostantivi, gli aggettivi, i pronomi e le frasi hanno anche l'analisi.
+const hasAnalysis = topic => topic !== "cases" && !topic.startsWith("verbs-");
+
+/* ============================================================
+   3. PROGRESSI E GIOCO
+   Tutto vive in un solo oggetto salvato nel browser. Le regole sono
+   poche: XP per le risposte giuste, gradi a soglie di XP, un obiettivo
+   giornaliero che alimenta la serie di giorni, alcuni traguardi.
+   ============================================================ */
+
+const dailyGoal = 10;
+const ranks = [
+  {xp: 0, name: "Tiro", gloss: "recluta"},
+  {xp: 100, name: "Miles", gloss: "soldato"},
+  {xp: 300, name: "Decurio", gloss: "decurione"},
+  {xp: 600, name: "Centurio", gloss: "centurione"},
+  {xp: 1000, name: "Tribunus", gloss: "tribuno"},
+  {xp: 1600, name: "Legatus", gloss: "legato"},
+  {xp: 2400, name: "Consul", gloss: "console"},
+  {xp: 3500, name: "Imperator", gloss: "comandante supremo"}
+];
+const correctIn = (group, key) => group[key]?.correct || 0;
+const badges = [
+  {id: "first", icon: "🌱", name: "Primus gradus", text: "La prima risposta corretta", test: p => p.correct >= 1},
+  {id: "combo", icon: "⚡", name: "Decies recte", text: "10 risposte corrette di fila", test: p => p.bestCombo >= 10},
+  {id: "table", icon: "📜", name: "Tabula perfecta", text: "Una tabella completata senza errori", test: p => p.perfectTables >= 1},
+  {id: "cases", icon: "🏛️", name: "Omnes casus", text: "3 risposte corrette per ciascuno dei sei casi", test: p => cases.every(c => correctIn(p.cases, c) >= 3)},
+  {id: "declensions", icon: "🖐️", name: "Quinque declinationes", text: "5 risposte corrette in ogni declinazione", test: p => [1, 2, 3, 4, 5].every(d => correctIn(p.topics, `${d}ª declinazione`) >= 5)},
+  {id: "verbs", icon: "🗣️", name: "Verba", text: "30 risposte corrette sui verbi", test: p => correctIn(p.topics, "Verbi") >= 30},
+  {id: "hundred", icon: "💯", name: "Centum responsa", text: "100 risposte corrette", test: p => p.correct >= 100},
+  {id: "week", icon: "🔥", name: "Septem dies", text: "Obiettivo giornaliero raggiunto 7 giorni di fila", test: p => p.streak.count >= 7}
+];
+
+const dayKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+const today = () => dayKey(new Date());
+function yesterday() {
+  const date = new Date();
+  date.setDate(date.getDate() - 1);
+  return dayKey(date);
+}
+
+const storageKey = "latino-palestra-v1";
+const emptyProgress = () => ({
+  attempts: 0, correct: 0, topics: {}, cases: {}, errors: {},
+  xp: 0, bestCombo: 0, perfectTables: 0, badges: {},
+  daily: {date: "", correct: 0}, streak: {count: 0, last: ""}
+});
+
+// I salvataggi della prima versione non avevano punti né serie: si completano con valori neutri.
+function readProgress(raw) {
+  const saved = JSON.parse(raw);
+  if (!saved || typeof saved.attempts !== "number" || typeof saved.correct !== "number" || !saved.topics || !saved.errors) throw new Error("Dati non validi");
+  const base = emptyProgress();
+  return {
+    ...base, ...saved,
+    cases: saved.cases || {},
+    badges: saved.badges || {},
+    xp: typeof saved.xp === "number" ? saved.xp : saved.correct * 10,
+    daily: {...base.daily, ...saved.daily},
+    streak: {...base.streak, ...saved.streak}
+  };
+}
+
+let progress = emptyProgress();
+let storageProblem = "";
+let storageBlocked = false;
+let combo = 0;
+
+try {
+  const raw = localStorage.getItem(storageKey);
+  if (raw) progress = readProgress(raw);
+} catch (error) {
+  storageBlocked = true;
+  storageProblem = "Non riesco a leggere i progressi salvati. Questa sessione non verrà salvata per evitare di sovrascrivere eventuali dati esistenti.";
+}
+
+function showStorageStatus() {
+  $("storage-status").textContent = storageProblem;
+  $("storage-warning").textContent = storageProblem;
+  $("storage-warning").hidden = !storageProblem;
+}
+
+function saveProgress() {
+  if (!storageBlocked) {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(progress));
+    } catch (error) {
+      storageProblem = "Non riesco a salvare i progressi: rimarranno disponibili solo finché questa pagina è aperta.";
+    }
+  }
+  showStorageStatus();
+}
+
+const rankIndex = xp => ranks.reduce((best, rank, i) => xp >= rank.xp ? i : best, 0);
+const dailyCorrect = () => progress.daily.date === today() ? progress.daily.correct : 0;
+// La serie resta viva finché l'obiettivo è stato raggiunto oggi o ieri.
+const activeStreak = () => [today(), yesterday()].includes(progress.streak.last) ? progress.streak.count : 0;
+
+function tally(group, key, correct) {
+  const entry = group[key] || (group[key] = {attempts: 0, correct: 0});
+  entry.attempts++;
+  if (correct) entry.correct++;
+}
+
+function countTowardsDailyGoal(events) {
+  const day = today();
+  if (progress.daily.date !== day) progress.daily = {date: day, correct: 0};
+  progress.daily.correct++;
+  if (progress.daily.correct === dailyGoal && progress.streak.last !== day) {
+    progress.streak.count = progress.streak.last === yesterday() ? progress.streak.count + 1 : 1;
+    progress.streak.last = day;
+    events.push(`Obiettivo di oggi raggiunto! Serie: ${progress.streak.count} ${progress.streak.count === 1 ? "giorno" : "giorni"}.`);
+  }
+}
+
+function unlockBadges(events) {
+  for (const badge of badges) {
+    if (!progress.badges[badge.id] && badge.test(progress)) {
+      progress.badges[badge.id] = today();
+      events.push(`Traguardo sbloccato: ${badge.icon} ${badge.name}`);
+    }
+  }
+}
+
+// Passaggio comune a ogni premio: assegna gli XP, annota gradi e traguardi, salva.
+function award(xp, events) {
+  const before = rankIndex(progress.xp);
+  progress.xp += xp;
+  const after = rankIndex(progress.xp);
+  if (after > before) events.push(`Nuovo grado: ${ranks[after].name} (${ranks[after].gloss})!`);
+  unlockBadges(events);
+  saveProgress();
+  renderHud();
+  return {xp, events};
+}
+
+function record(question, correct) {
+  const events = [];
+  let xp = 0;
+  progress.attempts++;
+  tally(progress.topics, question.stat, correct);
+  if (question.caseName) tally(progress.cases, question.caseName, correct);
+  if (correct) {
+    progress.correct++;
+    combo++;
+    progress.bestCombo = Math.max(progress.bestCombo, combo);
+    xp = 10 + 2 * Math.min(combo - 1, 5);
+    delete progress.errors[question.id];
+    countTowardsDailyGoal(events);
+  } else {
+    combo = 0;
+    progress.errors[question.id] = true;
+  }
+  return award(xp, events);
+}
+
+function recordTable(word, right, total) {
+  const events = [];
+  const perfect = right === total;
+  progress.attempts++;
+  tally(progress.topics, `${word.decl}ª declinazione`, perfect);
+  if (perfect) {
+    progress.correct++;
+    progress.perfectTables++;
+    countTowardsDailyGoal(events);
+  }
+  return award(2 * right + (perfect ? 10 : 0), events);
+}
+
+function rewardLines(result, showCombo) {
+  const box = el("div", "", "reward");
+  if (result.xp) box.append(el("p", `+${result.xp} XP` + (showCombo && combo > 1 ? ` · ${combo} di fila` : "")));
+  result.events.forEach(event => box.append(el("p", `🎉 ${event}`)));
+  return box;
+}
+
+function renderHud() {
+  const index = rankIndex(progress.xp), rank = ranks[index], next = ranks[index + 1];
+  const percent = next ? Math.round(100 * (progress.xp - rank.xp) / (next.xp - rank.xp)) : 100;
+  const streak = activeStreak(), done = dailyCorrect();
+  $("hud-rank").textContent = rank.name;
+  $("hud-gloss").textContent = `· ${rank.gloss}`;
+  $("hud-fill").style.width = `${percent}%`;
+  $("hud-bar").setAttribute("aria-valuenow", String(percent));
+  $("hud-xp").textContent = next ? `${progress.xp} XP · ne mancano ${next.xp - progress.xp} per ${next.name}` : `${progress.xp} XP · grado massimo`;
+  $("hud-streak").textContent = String(streak);
+  $("hud-streak-unit").textContent = streak === 1 ? "giorno" : "giorni";
+  $("hud-daily").textContent = `${done}/${dailyGoal}${done >= dailyGoal ? " ✓" : ""}`;
+  $("hud-combo").textContent = String(combo);
+}
+
+/* ============================================================
+   4. ESERCIZI
+   ============================================================ */
+
+let current = null;
+let previousId = null;
+
+function nextQuestion(focusAnswer = false) {
+  const topic = $("topic").value;
+  $("exercise-kind").disabled = !hasAnalysis(topic);
+  const kind = hasAnalysis(topic) ? $("exercise-kind").value : "form";
+  const deck = makeDeck(topic, kind).filter(question => question.id !== previousId);
+  // Le domande sbagliate entrano tre volte nel mazzo: tornano più spesso finché non riescono.
+  const weighted = deck.flatMap(question => progress.errors[question.id] ? [question, question, question] : [question]);
+  current = weighted[Math.floor(Math.random() * weighted.length)];
+  previousId = current.id;
+  renderQuestion(focusAnswer);
+}
+
+function sentenceBlock(question) {
+  const [before, word, after] = question.sentence.s.split(/[{}]/);
+  const box = el("div", "", "sentence");
+  const latin = el("p", "", "la");
+  latin.lang = "la";
+  latin.append(before, question.blank ? "_____" : el("strong", word), after);
+  box.append(latin, el("p", question.sentence.it, "it"));
+  return box;
+}
+
+function choiceInputs(question) {
+  const box = el("div", "", "choices");
+  let options;
+  if (question.multi) {
+    options = cases.flatMap(caseName => [`${caseName} singolare`, `${caseName} plurale`]);
+    box.classList.add("pairs");
+  } else if (question.options) {
+    options = question.options;
+  } else {
+    const right = new Set(question.answers.map(normalize));
+    const others = [...new Set(question.distractors.map(normalize))].filter(form => !right.has(form));
+    options = shuffle([normalize(question.answers[0]), ...shuffle(others).slice(0, 3)]);
+  }
+  options.forEach((option, i) => {
+    const label = el("label", "", "choice");
+    const input = document.createElement("input");
+    input.type = question.multi ? "checkbox" : "radio";
+    input.name = "answer";
+    input.value = option;
+    input.required = !question.multi && i === 0;
+    label.append(input, ` ${option}`);
+    box.append(label);
+  });
+  return box;
+}
+
+function textInput(question) {
+  const hint = question.multi ? "Scrivi tutte le possibilità separate da virgole (es. genitivo singolare, dativo singolare)"
+    : question.options ? "Scrivi il nome del caso" : "La tua risposta";
+  const label = el("label", hint, "small");
+  label.htmlFor = "answer";
+  const input = document.createElement("input");
+  input.id = "answer";
+  input.type = "text";
+  input.required = true;
+  // Sui telefoni la correzione automatica rovinerebbe le parole latine.
+  input.autocomplete = "off";
+  input.spellcheck = false;
+  input.setAttribute("autocapitalize", "off");
+  input.setAttribute("autocorrect", "off");
+  return [label, input];
+}
+
+function givenAnswers(question, form, mode) {
+  if (mode === "choice") return [...form.querySelectorAll("input:checked")].map(input => normalize(input.value));
+  const text = form.querySelector("#answer").value;
+  return (question.multi ? text.split(/[,;]+/) : [text]).map(normalize).filter(Boolean);
+}
+
+function isCorrect(question, given) {
+  const expected = question.answers.map(normalize);
+  if (!question.multi) return given.length === 1 && expected.includes(given[0]);
+  const chosen = new Set(given);
+  return chosen.size === expected.length && expected.every(answer => chosen.has(answer));
+}
+
+function renderQuestion(focusAnswer = false) {
+  const question = current, mode = $("answer-mode").value, area = $("question-area");
+  area.replaceChildren(el("p", question.stat, "eyebrow muted"));
+  if (question.context) area.append(el("p", question.context, "small muted"));
+  if (question.sentence) area.append(sentenceBlock(question));
+  area.append(el("p", question.prompt, "question"));
+
+  const form = document.createElement("form");
+  if (mode === "choice") {
+    if (question.multi) form.append(el("p", "Seleziona tutte le risposte corrette.", "small muted"));
+    form.append(choiceInputs(question));
+  } else {
+    form.append(...textInput(question));
+  }
+  const buttons = el("div", "", "button-row");
+  const check = el("button", "Controlla", "primary");
+  check.type = "submit";
+  buttons.append(check);
+  const feedback = document.createElement("div");
+  form.append(buttons, feedback);
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    const given = givenAnswers(question, form, mode);
+    if (!given.length) {
+      feedback.className = "feedback bad";
+      feedback.textContent = "Seleziona almeno una risposta.";
+      return;
+    }
+    const correct = isCorrect(question, given);
+    const result = record(question, correct);
+    form.querySelectorAll("input").forEach(input => input.disabled = true);
+    check.disabled = true;
+    feedback.className = `feedback ${correct ? "good" : "bad"}`;
+    feedback.replaceChildren(el("strong", correct ? "Esatto!" : "Non proprio."), el("p", question.explanation), rewardLines(result, true));
+    const next = el("button", "Prossima domanda", "primary");
+    next.type = "button";
+    next.addEventListener("click", () => nextQuestion(true));
+    buttons.append(next);
+    next.focus();
+  });
+
+  area.append(form);
+  if (focusAnswer) form.querySelector("input").focus();
+}
+
+["topic", "exercise-kind", "answer-mode"].forEach(id => $(id).addEventListener("change", () => nextQuestion()));
+$("new-question").addEventListener("click", () => nextQuestion());
+
+/* ---------- Completa la tabella ---------- */
+
+const tableWord = () => nouns.find(word => word.id === $("table-word").value);
+
+function renderTable() {
+  const body = $("table-body");
+  body.replaceChildren();
+  $("table-result").replaceChildren();
+  $("table-result").className = "";
+  $("check-table").disabled = false;
+  cases.forEach((caseName, c) => {
+    const row = body.insertRow();
+    const head = el("th", caseName);
+    head.scope = "row";
+    row.append(head);
+    [0, 1].forEach(n => {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.autocomplete = "off";
+      input.spellcheck = false;
+      input.setAttribute("autocapitalize", "off");
+      input.setAttribute("autocorrect", "off");
+      input.setAttribute("aria-label", `${caseName} ${numberName(n)}`);
+      input.dataset.case = c;
+      input.dataset.number = n;
+      row.insertCell().append(input);
+    });
+  });
+}
+
+$("table-form").addEventListener("submit", event => {
+  event.preventDefault();
+  const word = tableWord();
+  const inputs = [...$("table-body").querySelectorAll("input")];
+  const mistakes = [];
+  inputs.forEach(input => {
+    const c = Number(input.dataset.case), n = Number(input.dataset.number);
+    const ok = normalize(input.value) === normalize(word.forms[c][n]);
+    if (!ok) mistakes.push(`${cases[c]} ${numberName(n)}: ${word.forms[c][n]}`);
+    input.setAttribute("aria-invalid", String(!ok));
+    input.style.borderColor = ok ? "#258348" : "#b84428";
+    input.disabled = true;
+  });
+  const right = inputs.length - mistakes.length;
+  const outcome = recordTable(word, right, inputs.length);
+  const result = $("table-result");
+  result.className = `feedback ${mistakes.length ? "bad" : "good"}`;
+  result.replaceChildren(el("strong", `${right} su ${inputs.length} forme corrette.`));
+  if (mistakes.length) {
+    const list = document.createElement("ul");
+    mistakes.forEach(mistake => list.append(el("li", mistake)));
+    result.append(list);
+  }
+  result.append(rewardLines(outcome, false));
+  // Una tabella già corretta mostra le soluzioni: per riprovare si ricomincia.
+  $("check-table").disabled = true;
+});
+$("table-word").addEventListener("change", renderTable);
+$("clear-table").addEventListener("click", renderTable);
+
+/* ============================================================
+   5. PAGINE
+   ============================================================ */
+
+function showPage(id) {
+  for (const section of document.querySelectorAll("main > section")) section.hidden = section.id !== id;
+  for (const button of document.querySelectorAll("nav button")) {
+    if (button.dataset.page === id) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
+  }
+  if (id === "progress") renderStats();
+}
+document.querySelectorAll("nav button").forEach(button => button.addEventListener("click", () => showPage(button.dataset.page)));
+
+function table(headers, rows) {
+  const wrap = el("div", "", "table-wrap");
+  const element = document.createElement("table");
+  const head = element.createTHead().insertRow();
+  headers.forEach(header => head.append(el("th", header)));
+  const body = element.createTBody();
+  rows.forEach(cells => {
+    const row = body.insertRow();
+    cells.forEach((cell, i) => {
+      const item = el(i === 0 ? "th" : "td", cell);
+      if (i === 0) item.scope = "row";
+      row.append(item);
+    });
+  });
+  wrap.append(element);
+  return wrap;
+}
+
+function buildReference() {
+  const reference = $("reference");
+  const section = (title, entries, content) => {
+    reference.append(el("h4", title));
+    entries.forEach(entry => {
+      const details = document.createElement("details");
+      details.append(el("summary", entry.label), content(entry));
+      if (entry.note) details.append(el("p", entry.note, "small muted"));
+      reference.append(details);
+    });
+  };
+  const declension = word => table(["Caso", "Singolare", "Plurale"],
+    cases.map((caseName, c) => [caseName, ...[0, 1].map(n => acceptedForms(word, c, n).join(" / ") || "—")]));
+  const conjugation = v => table(["Persona", "Presente", "Imperfetto", "Futuro semplice"],
+    persons.map((person, i) => [person, v.tenses.pres[i], v.tenses.impf[i], v.tenses.fut[i]]));
+  section("Sostantivi", nouns.filter(word => word.model), declension);
+  section("Aggettivi", adjectives.filter(word => word.model), declension);
+  section("Pronomi personali", pronouns, declension);
+  section("Verbi · indicativo attivo", verbs.filter(v => v.model), conjugation);
+}
+
+function statList(title, entries) {
+  const list = document.createElement("ul");
+  entries.forEach(([name, value]) => list.append(el("li", `${name}: ${value.correct}/${value.attempts} corrette`)));
+  return [el("h3", title), list];
+}
+
+function renderStats() {
+  const stats = $("stats");
+  stats.replaceChildren();
+  const summary = el("div", "", "stats");
+  [[progress.xp, "XP totali"], [progress.correct, "risposte corrette"], [progress.attempts, "tentativi"],
+   [progress.bestCombo, "record di risposte di fila"], [Object.keys(progress.errors).length, "domande da ripassare"]
+  ].forEach(([value, label]) => {
+    const item = el("div", "", "stat");
+    item.append(el("strong", String(value)), el("span", label, "small muted"));
+    summary.append(item);
+  });
+  stats.append(summary);
+
+  const topics = Object.entries(progress.topics).sort((a, b) => a[0].localeCompare(b[0], "it"));
+  if (topics.length) stats.append(...statList("Per argomento", topics));
+  const byCase = cases.filter(name => progress.cases[name]).map(name => [name, progress.cases[name]]);
+  if (byCase.length) stats.append(...statList("Per caso", byCase));
+
+  const unlocked = badges.filter(badge => progress.badges[badge.id]).length;
+  stats.append(el("h3", `Traguardi · ${unlocked} su ${badges.length}`));
+  const list = el("ul", "", "badges");
+  badges.forEach(badge => {
+    const earned = Boolean(progress.badges[badge.id]);
+    const item = el("li", "", earned ? "badge" : "badge locked");
+    const icon = el("span", badge.icon, "icon");
+    icon.setAttribute("aria-hidden", "true");
+    const body = document.createElement("div");
+    body.append(el("strong", badge.name), el("p", badge.text, "small"), el("p", earned ? "Sbloccato" : "Da sbloccare", "small muted"));
+    item.append(icon, body);
+    list.append(item);
+  });
+  stats.append(list);
+  showStorageStatus();
+}
+
+$("reset-progress").addEventListener("click", () => {
+  if (!confirm("Vuoi cancellare tutti i progressi salvati su questo browser?")) return;
+  progress = emptyProgress();
+  combo = 0;
+  storageBlocked = false;
+  storageProblem = "";
+  saveProgress();
+  renderHud();
+  renderStats();
+});
+
+/* ---------- Avvio ---------- */
+
+// Gli errori annotati su domande che non esistono più (versioni precedenti) non devono restare nel conteggio.
+const knownIds = new Set([...$("topic").options].flatMap(option => ["form", "identify"].flatMap(kind => makeDeck(option.value, kind).map(question => question.id))));
+for (const id of Object.keys(progress.errors)) if (!knownIds.has(id)) delete progress.errors[id];
+// Chi arriva dalla prima versione può avere già meritato dei traguardi.
+unlockBadges([]);
+
+[1, 2, 3, 4, 5].forEach(decl => {
+  const group = document.createElement("optgroup");
+  group.label = `${decl}ª declinazione`;
+  nouns.filter(word => word.decl === decl).forEach(word => {
+    const option = el("option", word.label);
+    option.value = word.id;
+    group.append(option);
+  });
+  $("table-word").append(group);
+});
+
+buildReference();
+renderTable();
+renderHud();
+nextQuestion();
+renderStats();
+</script>
+</body>
+</html>
